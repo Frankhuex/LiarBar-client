@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Scripting;
 
@@ -36,6 +37,16 @@ public class Room
     public Room() { }
     public override string ToString()
     {
-        return JsonUtility.ToJson(this);
+        return JsonConvert.SerializeObject(this);
+    }
+
+    public bool IsMyTurn(int myIndex)
+    {
+        return currentPlayerIndex == myIndex;
+    }
+
+    public bool AmIRoundBeginner(int myIndex)
+    {
+        return currentPlayerIndex == roundBeginnerIndex;
     }
 }

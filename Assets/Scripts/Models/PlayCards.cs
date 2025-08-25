@@ -1,13 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Scripting;
 
 [Preserve]
+[Serializable]
 public class PlayCards
 {
-    List<Card> cards;
-    Card.Rank claimRank;
+    public List<Card> cards;
+    public Card.Rank claimRank;
 
     public PlayCards() { }
 

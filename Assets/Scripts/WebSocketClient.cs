@@ -104,7 +104,7 @@ public class WebSocketClient : MonoBehaviour
         // 序列化部分放在 try 块外
         try
         {
-            json = JsonUtility.ToJson(message);
+            json = message.ToString();
         }
         catch (Exception ex)
         {

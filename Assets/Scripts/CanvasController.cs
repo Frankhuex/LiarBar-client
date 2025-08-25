@@ -20,6 +20,7 @@ public class CanvasController : MonoBehaviour
     [SerializeField] private GameObject joinRoomMenu;
     [SerializeField] private GameObject lobby;
     [SerializeField] private GameObject menuBackground;
+    [SerializeField] private GameObject inGameActionButtons;
 
 
 
@@ -37,6 +38,9 @@ public class CanvasController : MonoBehaviour
     [SerializeField] private Button buttonReady;
     [SerializeField] private Button buttonHostStart;
     [SerializeField] private Button buttonChangeName;
+    [SerializeField] private Button buttonChallenge;
+    [SerializeField] private Button buttonSkipChallenge;
+    [SerializeField] private Button buttonPlayCards;
 
 
     [SerializeField] private TMP_InputField urlInput;
@@ -152,45 +156,6 @@ public class CanvasController : MonoBehaviour
         yield return RoomManager.Instance.JoinRoom(roomId);
     }
 
-    public IEnumerator HandleLeaveRoomButton1()
-    {
-        Debug.Log("Leave Room Button Pressed");
-        if (onRoomRefreshedCallback != null)
-        {
-            RoomManager.Instance.OnRoomRefreshed -= onRoomRefreshedCallback;
-        }
-        void callback(string text)
-        {
-            WebSocketClient.Instance.OnMessageReceived -= callback;
-            try
-            {
-                Message<string> message = JsonUtility.FromJson<Message<string>>(text);
-                if (message.msgType == Message<string>.MsgType.ROOM_LEFT)
-                {
-                    if (onRoomRefreshedCallback != null)
-                    {
-                        RoomManager.Instance.OnRoomRefreshed -= onRoomRefreshedCallback;
-                    }
-                    // tcs.SetResult(true);
-                    lobby.SetActive(false);
-                    connectedMenu.SetActive(true);
-                    textRoomId.text = "";
-                    Debug.Log("Left Room");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Error processing leave room message: {ex.Message}");
-            }
-
-        }
-        WebSocketClient.Instance.OnMessageReceived += callback;
-        yield return RoomManager.Instance.LeaveRoom();
-        
-        Debug.Log("Leave Room Button Finished");
-
-    }
-
     public IEnumerator HandleLeaveRoomButton()
     {
         lobby.SetActive(false);
@@ -211,7 +176,7 @@ public class CanvasController : MonoBehaviour
 
         if (room.started)
         {
-            HandleClientStart();
+            StartCoroutine(HandleClientStart());
             yield break;
         }
 
@@ -293,8 +258,10 @@ public class CanvasController : MonoBehaviour
             Debug.LogError("Not all players are ready.");
             yield break;
         }
-
-        RoomManager.Instance.OnRoomRefreshed -= onRoomRefreshedCallback;
+        if (onRoomRefreshedCallback != null)
+        {
+            RoomManager.Instance.OnRoomRefreshed -= onRoomRefreshedCallback;
+        }
         onRoomRefreshedCallback = (Room room) =>
         {
             Debug.Log("New room: " + room.ToString());
@@ -311,7 +278,10 @@ public class CanvasController : MonoBehaviour
 
     public IEnumerator HandleClientStart()
     {
-        RoomManager.Instance.OnRoomRefreshed -= onRoomRefreshedCallback;
+        if (onRoomRefreshedCallback != null)
+        {
+            RoomManager.Instance.OnRoomRefreshed -= onRoomRefreshedCallback;
+        }
         lobby.SetActive(false);
         menuBackground.SetActive(false);
         gameManager.StartGame();
@@ -330,6 +300,9 @@ public class CanvasController : MonoBehaviour
     {
         menuBackground.SetActive(true);
         mainMenu.SetActive(true);
+        inGameActionButtons.SetActive(false);
+
+
 
         foreach (GameObject menu in new GameObject[] { settingMenu, connectedMenu, joinRoomMenu, lobby })
         {

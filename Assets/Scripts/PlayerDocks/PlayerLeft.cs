@@ -6,8 +6,13 @@ using UnityEngine.Scripting;
 [Preserve]
 public class PlayerLeft : IPlayerDock
 {
+    public override void Init(Player player)
+    {
+
+    }
+
     public override void Refresh(Player player)
     {
-        throw new System.NotImplementedException();
+
     }
 }

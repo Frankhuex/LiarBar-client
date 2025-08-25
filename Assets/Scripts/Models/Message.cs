@@ -75,7 +75,8 @@ public class Message<T>
         }
         catch (Exception ex)
         {
-            Debug.Log($"Failed to deserialize message: {ex.Message}");
+            Debug.LogError($"Failed to deserialize message: {ex.Message}");
+            Debug.LogError(ex.StackTrace);
             return null;
         }
     }

@@ -24,16 +24,9 @@ public class CardManager
         this.offset = offset;
     }
 
-    public void AddOrDeleteCard(Card card)
+    public bool Add(Card card)
     {
-        if (cardObjects.ContainsKey(card))
-        {
-            GameObject cardObject = cardObjects[card];
-            cardSequence.Remove(card);
-            cardObjects.Remove(card);
-            GameObject.Destroy(cardObject);
-        }
-        else
+        if (!cardObjects.ContainsKey(card))
         {
             GameObject cardObject = Card.CreateCardObject
             (
@@ -45,7 +38,22 @@ public class CardManager
             );
             cardSequence.Add(card);
             cardObjects.Add(card, cardObject);
+            return true;
         }
+        return false;
+    }
+
+    public bool Remove(Card card)
+    {
+        if (cardObjects.ContainsKey(card))
+        {
+            GameObject cardObject = cardObjects[card];
+            cardSequence.Remove(card);
+            cardObjects.Remove(card);
+            Object.Destroy(cardObject);
+            return true;
+        }
+        return false;
     }
 
     public void SortCards()
@@ -60,13 +68,43 @@ public class CardManager
             cardObject.transform.position = parent.position + new Vector3(x0 + i * offset, 0f, 10 - 0.1f * i);
         }
     }
-    
-    public void RefreshCards(List<Card> cards)
+
+    public void RefreshCards(List<Card> newCardSequence)
     {
-        foreach (Card card in cards)
+        HashSet<Card> newCardSet = new(newCardSequence);
+        List<Card> oldCardSequence = new(cardSequence);
+        foreach (Card card in oldCardSequence)
         {
-            AddOrDeleteCard(card);
+            if (!newCardSet.Contains(card))
+            {
+                Remove(card);
+            }
         }
+        foreach (Card card in newCardSet)
+        {
+            if (!cardObjects.ContainsKey(card))
+            {
+                Add(card);
+            }
+        }
+
         SortCards();
+        SetPick(false);
+    }
+
+    public bool IsPicked(Card card)
+    {
+        return cardObjects[card].GetComponent<CardMouseDetector>().isPicked;
+    }
+
+    public void SetPick(bool pick)
+    {
+        foreach (GameObject cardObject in cardObjects.Values)
+        {
+            if (cardObject.TryGetComponent<CardMouseDetector>(out var cardMouseDetector))
+            {
+                cardMouseDetector.SetPick(pick);
+            }
+        }
     }
 }

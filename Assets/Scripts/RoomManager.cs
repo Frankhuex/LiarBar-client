@@ -58,16 +58,20 @@ public class RoomManager
         }
         catch (System.Exception ex)
         {
-            try
-            {
-                Message<string> msg2 = Message<string>.FromJson<Message<string>>(text);
-                Debug.Log("Message not REFRESH_ROOM: " + msg2.ToString());
-            }
-            catch (System.Exception ex2)
-            {
-                Debug.Log("Error parsing message: " + text);
-                Debug.Log("Caught exception: " + ex2.Message);
-            }
+            Debug.Log("Error parsing message: " + text);
+            Debug.Log("Caught exception: " + ex.Message);
+            Debug.Log("Stack trace: " + ex.StackTrace);
+            // try
+            // {
+            //     Message<string> msg2 = Message<string>.FromJson<Message<string>>(text);
+            //     Debug.Log("Message not REFRESH_ROOM: " + msg2.ToString());
+            // }
+            // catch (System.Exception ex2)
+            // {
+            //     Debug.Log("Error parsing message: " + text);
+            //     Debug.Log("Caught exception: " + ex2.Message);
+            //     Debug.Log("Stack trace: " + ex2.StackTrace);
+            // }
         }
         finally
         {
@@ -147,6 +151,82 @@ public class RoomManager
         Message<string> msg = new Message<string>(Message<string>.MsgType.START_GAME, room.id);
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
     }
+
+    public IEnumerator PlayCards(PlayCards playcards)
+    {   
+        if (room == null || player == null)
+        {
+            Debug.LogError("Cannot play cards, not in a room or player not found.");
+            yield break;
+        }
+        if (!room.started)
+        {
+            Debug.LogError("Game not started.");
+            yield break;
+        }
+        if (!room.AmIRoundBeginner(GetSelfIndex()))
+        {
+            Debug.LogError("Youare not the round beginner.");
+            yield break;
+        }
+
+        Message<PlayCards> msg = new Message<PlayCards>(Message<PlayCards>.MsgType.PLAY_CARDS, playcards);
+        Debug.Log("Play Cards: " + msg.ToString());
+        yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+    }
+
+    public IEnumerator Skip()
+    {
+        if (room == null || player == null)
+        {
+            Debug.LogError("Cannot play cards, not in a room or player not found.");
+            yield break;
+        }
+        if (!room.started)
+        {
+            Debug.LogError("Game not started.");
+            yield break;
+        }
+        if (!room.IsMyTurn(GetSelfIndex()))
+        {
+            Debug.LogError("Not your turn.");
+            yield break;
+        }
+        else if (room.AmIRoundBeginner(GetSelfIndex()))
+        {
+            Debug.LogError("You are the round beginner. Cannot skip.");
+            yield break;
+        }
+        Message<PlayCards> msg = new(Message<PlayCards>.MsgType.SKIP, null);
+        yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+    }
+
+    public IEnumerator Challenge()
+    {
+        if (room == null || player == null)
+        {
+            Debug.LogError("Cannot play cards, not in a room or player not found.");
+            yield break;
+        }
+        if (!room.started)
+        {
+            Debug.LogError("Game not started.");
+            yield break;
+        }
+        if (!room.IsMyTurn(GetSelfIndex()))
+        {
+            Debug.LogError("Not your turn.");
+            yield break;
+        }
+        else if (room.AmIRoundBeginner(GetSelfIndex()))
+        {
+            Debug.LogError("You are the round beginner. Cannot challenge.");
+            yield break;
+        }
+        Message<PlayCards> msg = new(Message<PlayCards>.MsgType.CHALLENGE, null);
+        yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+    }
+
 
     public int GetSelfIndex()
     {

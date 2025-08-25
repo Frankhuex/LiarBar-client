@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Scripting;
 
 [Preserve]
+[Serializable]
 public class Card : IComparable<Card>, IEquatable<Card>
 {
     public enum Suit
@@ -108,7 +109,12 @@ public class Card : IComparable<Card>, IEquatable<Card>
         {
             return 1;
         }
-        return this.rank.CompareTo(other.rank);
+        int rankCompare = this.rank.CompareTo(other.rank);
+        if (rankCompare != 0)
+        {
+            return rankCompare;
+        }
+        return this.suit.CompareTo(other.suit);
     }
 
     public static GameObject CreateCardObject(Card card, GameObject cardPrefab, Transform parent, Vector3 relativePosition, Vector3 localScale)
@@ -120,6 +126,11 @@ public class Card : IComparable<Card>, IEquatable<Card>
         cardObject.transform.localScale = localScale;
         cardObject.GetComponent<SpriteRenderer>().sprite = sprite;
         cardObject.name = card.ToString();
+        CardMouseDetector detector = cardObject.GetComponent<CardMouseDetector>();
+        if (detector != null)
+        {
+            detector.card = card;
+        }
         Debug.Log("Create card object: " + card.ToString() + " - " + cardObject.name);
         return cardObject;
     }
