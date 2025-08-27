@@ -5,7 +5,7 @@ using UnityEngine;
 public class CardMouseDetector : MonoBehaviour
 {
     private float oldY = Consts.Y_HANDCARDS;
-    private float offset = Consts.HANDCARDS_OFFSET;
+    private readonly float offset = Consts.HANDCARDS_OFFSET;
     public bool isPicked = false;
     public Card card;
 

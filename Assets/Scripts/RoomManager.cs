@@ -40,12 +40,10 @@ public class RoomManager
         {
             Message<Room> msg = Message<Room>.FromJson<Message<Room>>(text);
             Debug.Log("Message parsed: " + msg.ToString());
-            Debug.Log("Message ID: " + msg.msgId);
             if (msg.msgType == Message<Room>.MsgType.ROOM_PLAYERS_LIST)
             {
                 room = msg.data;
                 player = room.playerList.Find(x => x.userId == WebSocketClient.Instance.userId);
-                Debug.Log("Room ID: " + room.id + " Message ID: " + msg.msgId);
                 Debug.Log("Room refreshed: " + room.ToString() + " Message ID: " + msg.msgId);
                 OnRoomRefreshed?.Invoke(room);
                 Debug.Log("Room refreshed event invoked." + " Message ID: " + msg.msgId);
@@ -58,9 +56,9 @@ public class RoomManager
         }
         catch (System.Exception ex)
         {
-            Debug.Log("Error parsing message: " + text);
-            Debug.Log("Caught exception: " + ex.Message);
-            Debug.Log("Stack trace: " + ex.StackTrace);
+            Debug.LogError("Error parsing message: " + text);
+            Debug.LogError("Caught exception: " + ex.Message);
+            Debug.LogError(ex.StackTrace);
             // try
             // {
             //     Message<string> msg2 = Message<string>.FromJson<Message<string>>(text);
@@ -83,12 +81,14 @@ public class RoomManager
     {
         Message<string> msg = new Message<string>(Message<string>.MsgType.CREATE_ROOM, "test");
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+        Debug.Log("Created room request sent.");
     }
 
     public IEnumerator JoinRoom(string roomId)
     {
         Message<string> msg = new Message<string>(Message<string>.MsgType.JOIN_ROOM, roomId);
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+        Debug.Log("Joined room request sent: "+roomId);
     }
 
     public IEnumerator LeaveRoom()
@@ -102,6 +102,7 @@ public class RoomManager
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
         room = null; // Clear the room after leaving
         player = null;
+        Debug.Log("Left room request sent.");
     }
 
     public IEnumerator Ready(bool ready)
@@ -111,8 +112,9 @@ public class RoomManager
             Debug.LogError("Cannot change ready status, not in a room or player not found.");
             yield break;
         }
-        Message<bool> msg = new Message<bool>(Message<bool>.MsgType.PREPARE, ready);
+        Message<bool> msg = new(Message<bool>.MsgType.PREPARE, ready);
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+        Debug.Log("Ready request sent: " + ready);
     }
 
     public IEnumerator ChangeName(string name)
@@ -124,6 +126,7 @@ public class RoomManager
         }
         Message<string> msg = new Message<string>(Message<string>.MsgType.CHANGE_NAME, name);
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+        Debug.Log("Name changed request sent: " + name);
     }
 
     public IEnumerator StartGame()
@@ -150,10 +153,11 @@ public class RoomManager
         }
         Message<string> msg = new Message<string>(Message<string>.MsgType.START_GAME, room.id);
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+        Debug.Log("Start Game request sent:");
     }
 
     public IEnumerator PlayCards(PlayCards playcards)
-    {   
+    {
         if (room == null || player == null)
         {
             Debug.LogError("Cannot play cards, not in a room or player not found.");
@@ -164,15 +168,15 @@ public class RoomManager
             Debug.LogError("Game not started.");
             yield break;
         }
-        if (!room.AmIRoundBeginner(GetSelfIndex()))
+        if (!room.CanPlayCards(GetSelfIndex()))
         {
-            Debug.LogError("Youare not the round beginner.");
+            Debug.LogError("It's not your turn, or there are claim to be challenged or skipped, even if you are the round beginner of a old round.");
             yield break;
         }
 
-        Message<PlayCards> msg = new Message<PlayCards>(Message<PlayCards>.MsgType.PLAY_CARDS, playcards);
-        Debug.Log("Play Cards: " + msg.ToString());
+        Message<PlayCards> msg = new(Message<PlayCards>.MsgType.PLAY_CARDS, playcards);
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+        Debug.Log("Play Cards request sent: " + msg.ToString());
     }
 
     public IEnumerator Skip()
@@ -182,23 +186,19 @@ public class RoomManager
             Debug.LogError("Cannot play cards, not in a room or player not found.");
             yield break;
         }
-        if (!room.started)
+        if (!room.started || room.ended)
         {
-            Debug.LogError("Game not started.");
+            Debug.LogError("Game not started or already ended.");
             yield break;
         }
-        if (!room.IsMyTurn(GetSelfIndex()))
+        if (!room.CanChallengeOrSkip(GetSelfIndex()))
         {
-            Debug.LogError("Not your turn.");
-            yield break;
-        }
-        else if (room.AmIRoundBeginner(GetSelfIndex()))
-        {
-            Debug.LogError("You are the round beginner. Cannot skip.");
+            Debug.LogError("Not your turn, or you are the round beginner of a new round.");
             yield break;
         }
         Message<PlayCards> msg = new(Message<PlayCards>.MsgType.SKIP, null);
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+        Debug.Log("Skip request sent.");
     }
 
     public IEnumerator Challenge()
@@ -208,23 +208,19 @@ public class RoomManager
             Debug.LogError("Cannot play cards, not in a room or player not found.");
             yield break;
         }
-        if (!room.started)
+        if (!room.started || room.ended)
         {
-            Debug.LogError("Game not started.");
+            Debug.LogError("Game not started or already ended.");
             yield break;
         }
-        if (!room.IsMyTurn(GetSelfIndex()))
+        if (!room.CanChallengeOrSkip(GetSelfIndex()))
         {
-            Debug.LogError("Not your turn.");
-            yield break;
-        }
-        else if (room.AmIRoundBeginner(GetSelfIndex()))
-        {
-            Debug.LogError("You are the round beginner. Cannot challenge.");
+            Debug.LogError("Not your turn, or you are the round beginner of a new round.");
             yield break;
         }
         Message<PlayCards> msg = new(Message<PlayCards>.MsgType.CHALLENGE, null);
         yield return WebSocketClient.Instance.SendMessageCoroutine(msg);
+        Debug.Log("Challenge request sent.");
     }
 
 

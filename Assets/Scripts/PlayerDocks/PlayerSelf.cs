@@ -35,15 +35,16 @@ public class PlayerSelf : IPlayerDock
         handCardManager = new CardManager(new List<Card>(), new Dictionary<Card, GameObject>(), handCards.transform, cardPrefab, Consts.HANDCARDS_SCALE * Vector3.one, 0f, Consts.HANDCARDS_OFFSET);
         playedCardManager = new CardManager(new List<Card>(), new Dictionary<Card, GameObject>(), playedCards.transform, cardPrefab, Consts.PLAYEDCARDS_SCALE * Vector3.one, 0f, Consts.PLAYEDCARDS_OFFSET);
         Refresh(player);
+        Debug.Log("已初始化玩家信息：" + player.ToString());
     }
-
     public override void Refresh(Player player)
     {
-        Debug.Log("刷新玩家信息：" + player.ToString());
+        
         playerName.text = player.name;
         remainCardsNumLabel.text = player.handCards.Count.ToString();
         handCardManager.RefreshCards(player.handCards);
         playedCardManager.RefreshCards(player.playedCards);
+        Debug.Log("已刷新玩家信息：" + player.ToString());
     }
 
     private IEnumerator OnPlayCardsButtonClick()

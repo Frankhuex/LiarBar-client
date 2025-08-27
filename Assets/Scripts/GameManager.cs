@@ -76,9 +76,20 @@ public class GameManager : MonoBehaviour
             if (savedRoom.AmIRoundBeginner(selfIndex))
             {
                 Debug.Log("It's my turn and I am the round beginner");
-                buttonChallenge.gameObject.SetActive(false);
-                buttonSkipChallenge.gameObject.SetActive(false);
-                buttonPlayCards.gameObject.SetActive(true);
+                if (savedRoom.currentClaimRank == Card.Rank.NULL)
+                {
+                    Debug.Log("I start new round");
+                    buttonChallenge.gameObject.SetActive(false);
+                    buttonSkipChallenge.gameObject.SetActive(false);
+                    buttonPlayCards.gameObject.SetActive(true);
+                }
+                else
+                {
+                    Debug.Log("There is a claim, I cannot play cards yet.");
+                    buttonChallenge.gameObject.SetActive(true);
+                    buttonSkipChallenge.gameObject.SetActive(true);
+                    buttonPlayCards.gameObject.SetActive(false);
+                }
             }
             else
             {
