@@ -9,7 +9,7 @@ using UnityEngine.Scripting;
 [Preserve]
 public class WebSocketClient : MonoBehaviour
 {
-    public string url = "localhost:8080";
+    public string url="115.159.31.68:5500";
     public string userId = Guid.NewGuid().ToString();
 
     private static WebSocketClient _instance;
@@ -28,6 +28,7 @@ public class WebSocketClient : MonoBehaviour
             {
                 GameObject go = new GameObject("WebSocketClient");
                 _instance = go.AddComponent<WebSocketClient>();
+                _instance.url = "115.159.31.68:5500";
                 DontDestroyOnLoad(go);
             }
             return _instance;
@@ -41,6 +42,7 @@ public class WebSocketClient : MonoBehaviour
 
     private IEnumerator ConnectCoroutine()
     {
+        userId = Guid.NewGuid().ToString();
         string fullUrl = "ws://" + url + "/api/ws/" + userId;
         _webSocket = new WebSocket(fullUrl);
 

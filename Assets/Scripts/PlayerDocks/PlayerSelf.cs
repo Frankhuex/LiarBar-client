@@ -18,6 +18,8 @@ public class PlayerSelf : IPlayerDock
     [SerializeField] private Button buttonSkipChallenge;
     [SerializeField] private Button buttonPlayCards;
 
+    [SerializeField] private RankSelector rankSelector;
+
     private CardManager handCardManager;
     private CardManager playedCardManager;
 
@@ -32,8 +34,8 @@ public class PlayerSelf : IPlayerDock
 
     public override void Init(Player player)
     {
-        handCardManager = new CardManager(new List<Card>(), new Dictionary<Card, GameObject>(), handCards.transform, cardPrefab, Consts.HANDCARDS_SCALE * Vector3.one, 0f, Consts.HANDCARDS_OFFSET);
-        playedCardManager = new CardManager(new List<Card>(), new Dictionary<Card, GameObject>(), playedCards.transform, cardPrefab, Consts.PLAYEDCARDS_SCALE * Vector3.one, 0f, Consts.PLAYEDCARDS_OFFSET);
+        handCardManager = new CardManager(new List<Card>(), new Dictionary<Card, GameObject>(), handCards.transform, cardPrefab, Consts.HANDCARDS_SCALE * Vector3.one, 0f, Consts.HANDCARDS_OFFSET, CardManager.Alignment.CENTER, false);
+        playedCardManager = new CardManager(new List<Card>(), new Dictionary<Card, GameObject>(), playedCards.transform, cardPrefab, Consts.PLAYEDCARDS_SCALE * Vector3.one, 0f, Consts.PLAYEDCARDS_OFFSET, CardManager.Alignment.CENTER, true);
         Refresh(player);
         Debug.Log("已初始化玩家信息：" + player.ToString());
     }
@@ -49,21 +51,28 @@ public class PlayerSelf : IPlayerDock
 
     private IEnumerator OnPlayCardsButtonClick()
     {
+        if (handCardManager.cardSequence.FindAll(card => handCardManager.IsPicked(card)).Count == 0)
+        {
+            Debug.Log("请选择牌");
+            yield break;
+        }
+
+        Card.Rank toClaim = RoomManager.Instance.room.currentClaimRank;
+        if (RoomManager.Instance.room.MustClaim(RoomManager.Instance.room.currentPlayerIndex))
+        {
+            toClaim = rankSelector.Rank;
+        }
+        
         yield return RoomManager.Instance.PlayCards(
             new PlayCards(
                 handCardManager.cardSequence.FindAll(card => handCardManager.IsPicked(card)),
-                Card.Rank.ACE
+                toClaim
             )
         );
     }
 
-
-
-
-
-
-    
-
+    /////////////////////////////////////////////
+    // 以下为出牌功能相关代码
     // --- 状态变量 ---
     private bool isDragging = false;          // 标记当前是否正在进行有效的拖拽操作
     private CardMouseDetector headCard = null;  // 记录拖拽的“头部”卡牌

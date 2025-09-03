@@ -21,7 +21,7 @@ public class CanvasController : MonoBehaviour
     [SerializeField] private GameObject lobby;
     [SerializeField] private GameObject menuBackground;
     [SerializeField] private GameObject inGameActionButtons;
-
+    [SerializeField] private GameObject rankSelector;
 
 
 
@@ -129,6 +129,7 @@ public class CanvasController : MonoBehaviour
         }
         onRoomRefreshedCallback = (Room room) =>
         {
+            Debug.Log("OnRoomRefresh callback invoked.");
             connectedMenu.SetActive(false);
             lobby.SetActive(true);
             StartCoroutine(RefreshLobbyList(room));
@@ -301,6 +302,7 @@ public class CanvasController : MonoBehaviour
         menuBackground.SetActive(true);
         mainMenu.SetActive(true);
         inGameActionButtons.SetActive(false);
+        rankSelector.SetActive(false);
 
 
 

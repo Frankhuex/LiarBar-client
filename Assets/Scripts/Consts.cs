@@ -29,6 +29,7 @@ public static class Consts
     public static Vector2 LEFT_POS = new Vector2(X_LEFT, Y_MIDDLE);
     public static Vector2 HANDCARDS_POS = new Vector2(X_CENTER, -3.6f);
     public static Color GREY = new(0.8f, 0.8f, 0.8f, 1f);
+    public static Color RED = new(166f, 46f, 18f, 1f);
     public static float GetXByProportionFromRight(float proportion)
     {
         return X_RIGHT - (X_RIGHT - X_LEFT) * proportion;

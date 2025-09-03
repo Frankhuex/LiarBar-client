@@ -33,6 +33,12 @@ public class Card : IComparable<Card>, IEquatable<Card>
     public override string ToString()
     {
         string suitName = suit.ToString()[0..1] + suit.ToString()[1..].ToLower();
+        string rankName = RankToString(rank);
+        return suitName + "_" + rankName;
+    }
+
+    public static string RankToString(Rank rank)
+    {
         string rankName = rank switch
         {
             Rank.NULL => "Null",
@@ -51,7 +57,7 @@ public class Card : IComparable<Card>, IEquatable<Card>
             Rank.KING => "K",
             _ => ""
         };
-        return suitName + "_" + rankName;
+        return rankName;
     }
 
     public override bool Equals(object obj)
@@ -117,9 +123,16 @@ public class Card : IComparable<Card>, IEquatable<Card>
         return this.suit.CompareTo(other.suit);
     }
 
-    public static GameObject CreateCardObject(Card card, GameObject cardPrefab, Transform parent, Vector3 relativePosition, Vector3 localScale)
+    public static GameObject CreateCardObject(Card card, GameObject cardPrefab, Transform parent, Vector3 relativePosition, Vector3 localScale, bool hidden)
     {
-        Sprite sprite = PokerSpriteManager.Instance.GetPokerSprite(card);
+        Sprite sprite;
+        if (hidden)
+        {
+            sprite = PokerSpriteManager.Instance.GetHiddenPokerSprite();
+        }
+        else {
+            sprite = PokerSpriteManager.Instance.GetPokerSprite(card);
+        }
         Debug.Log("Get card sprite: " + sprite.name);
         GameObject cardObject = GameObject.Instantiate(cardPrefab, parent);
         cardObject.transform.position = parent.position + relativePosition;

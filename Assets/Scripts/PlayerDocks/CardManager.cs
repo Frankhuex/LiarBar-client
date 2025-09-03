@@ -13,7 +13,23 @@ public class CardManager
     public GameObject cardPrefab;
     public float relativeY;
     public float offset;
-    public CardManager(List<Card> cardSequence, Dictionary<Card, GameObject> cardObjects, Transform parent, GameObject cardPrefab, Vector3 localScale, float relativeY, float offset)
+    public bool hidden;
+    public enum Alignment
+    {
+        LEFT, CENTER, RIGHT
+    }
+    public Alignment alignment;
+    public CardManager(
+        List<Card> cardSequence,
+        Dictionary<Card, GameObject> cardObjects,
+        Transform parent,
+        GameObject cardPrefab,
+        Vector3 localScale,
+        float relativeY,
+        float offset,
+        Alignment alignment,
+        bool hidden
+    )
     {
         this.cardSequence = cardSequence;
         this.cardObjects = cardObjects;
@@ -22,6 +38,8 @@ public class CardManager
         this.cardPrefab = cardPrefab;
         this.relativeY = relativeY;
         this.offset = offset;
+        this.alignment = alignment;
+        this.hidden = hidden;
     }
 
     public bool Add(Card card)
@@ -34,7 +52,8 @@ public class CardManager
                 cardPrefab,
                 parent,
                 new Vector3(0f, 0f, 0f),
-                localScale
+                localScale,
+                hidden
             );
             cardSequence.Add(card);
             cardObjects.Add(card, cardObject);
@@ -56,11 +75,22 @@ public class CardManager
         return false;
     }
 
+    
+
     public void SortCards()
     {
         cardSequence.Sort();
         int cardCount = cardSequence.Count;
         float x0 = (1 - cardCount) / 2f * offset;
+        if (alignment == Alignment.LEFT)
+        {
+            x0 = 0f;
+        }
+        else if (alignment == Alignment.RIGHT)
+        {
+            x0 = (1 - cardCount) * offset;
+        }
+
         for (int i = 0; i < cardCount; i++)
         {
             Card card = cardSequence[i];
@@ -68,6 +98,7 @@ public class CardManager
             cardObject.transform.position = parent.position + new Vector3(x0 + i * offset, 0f, 10 - 0.1f * i);
         }
     }
+    
 
     public void RefreshCards(List<Card> newCardSequence)
     {

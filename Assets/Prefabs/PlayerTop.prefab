@@ -218,6 +218,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3de3db4de5ae4db9aa3533d729e3d62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playedCards: {fileID: 6150945839555460223}
+  remainCardsNumLabel: {fileID: 7404139031019414956}
+  playerName: {fileID: 6554735523165948496}
+  cardPrefab: {fileID: 6614539856927187383, guid: 334b876c1a0cd4de6afc1d48ef62c5f0, type: 3}
+  alignment: 1
 --- !u!1 &5535243266507119492
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,7 +297,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 5d0cadb45587d41708abaef48d4b3fe4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 911ebb49e75a248c0b377862907112a0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

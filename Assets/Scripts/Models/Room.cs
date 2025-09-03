@@ -40,7 +40,7 @@ public class Room
     {
         // StringBuilder 在迴圈中比字串串接更有效率。
         var sb = new StringBuilder();
-        
+
         sb.AppendLine("--------------------------------------------------------------------");
         sb.AppendLine($"Room {id}");
         sb.AppendLine("--------------------------------------------------------------------");
@@ -57,17 +57,17 @@ public class Room
         sb.AppendLine($"Max players: {maxPlayers}");
         sb.AppendLine($"Started: {started}");
         sb.AppendLine($"Ended: {ended}");
-        
+
         // 使用 null 條件運算子 (?.) 來處理 CardDeck 可能為 null 的情況。
         sb.AppendLine($"Card deck: {(cardDeck == null ? "null" : cardDeck.Count.ToString())}");
-        
+
         sb.AppendLine($"Current player: {currentPlayerIndex}");
         sb.AppendLine($"Round beginner: {roundBeginnerIndex}");
         sb.AppendLine($"Current claim rank: {currentClaimRank}");
-        
+
         // 同樣地，處理 Winner 可能為 null 的情況。
         sb.AppendLine($"Winner: {(winner == null ? "null" : winner.name)}");
-        
+
         sb.AppendLine("---------------------------------------------------------------------");
 
         return sb.ToString();
@@ -84,15 +84,22 @@ public class Room
 
     public bool AmIRoundBeginner(int myIndex)
     {
-        return currentPlayerIndex == roundBeginnerIndex;
+        return IsMyTurn(myIndex) && currentPlayerIndex == roundBeginnerIndex;
     }
     public bool CanPlayCards(int myIndex)
     {
-        return !ended && IsMyTurn(myIndex) && ((AmIRoundBeginner(myIndex) && currentClaimRank == Card.Rank.NULL) || !AmIRoundBeginner(myIndex));
+        // return !ended && IsMyTurn(myIndex) && ((AmIRoundBeginner(myIndex) && currentClaimRank == Card.Rank.NULL) || !AmIRoundBeginner(myIndex));
+        return IsMyTurn(myIndex);
     }
 
     public bool CanChallengeOrSkip(int myIndex)
     {
-        return !ended && IsMyTurn(myIndex) && currentClaimRank!= Card.Rank.NULL;
+        return IsMyTurn(myIndex) && currentClaimRank != Card.Rank.NULL;
     }
+
+    public bool MustClaim(int myIndex)
+    {
+        return IsMyTurn(myIndex) && currentClaimRank == Card.Rank.NULL;
+    }
+    
 }

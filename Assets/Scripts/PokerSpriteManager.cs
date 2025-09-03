@@ -79,4 +79,10 @@ public class PokerSpriteManager : MonoBehaviour
     {
         return GetPokerSprite(card.ToString());
     }
+
+    public Sprite GetHiddenPokerSprite()
+    {
+        Card.Rank claimed = RoomManager.Instance.room.currentClaimRank;
+        return GetPokerSprite("Unknown_" + Card.RankToString(claimed));
+    }
 }

@@ -276,7 +276,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 5d0cadb45587d41708abaef48d4b3fe4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 911ebb49e75a248c0b377862907112a0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -467,7 +467,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6242237094673607711}
-  - component: {fileID: 553133237911344469}
+  - component: {fileID: 8557084926412601576}
   m_Layer: 0
   m_Name: PlayerRight
   m_TagString: Untagged
@@ -493,7 +493,7 @@ Transform:
   - {fileID: 7273646586278918466}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &553133237911344469
+--- !u!114 &8557084926412601576
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -502,6 +502,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7714837517787706196}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70106b24c38a94f97904f82f2d256fb1, type: 3}
+  m_Script: {fileID: 11500000, guid: f3de3db4de5ae4db9aa3533d729e3d62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playedCards: {fileID: 3747598706567600285}
+  remainCardsNumLabel: {fileID: 1665255445175705195}
+  playerName: {fileID: 4162198003867243224}
+  cardPrefab: {fileID: 6614539856927187383, guid: 334b876c1a0cd4de6afc1d48ef62c5f0, type: 3}
+  alignment: 2

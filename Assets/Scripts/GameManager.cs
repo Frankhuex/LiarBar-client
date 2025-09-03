@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Button buttonChallenge;
     [SerializeField] private Button buttonSkipChallenge;
     [SerializeField] private Button buttonPlayCards;
+    [SerializeField] private GameObject rankSelectorObj;
 
     private GameObject[] docks; // Index follows playerList order
     private int selfIndex;
@@ -69,6 +70,7 @@ public class GameManager : MonoBehaviour
     public void CheckMyTurn()
     {
         Debug.Log("Check my turn");
+        rankSelectorObj.SetActive(false);
         if (savedRoom.IsMyTurn(selfIndex))
         {
             Debug.Log("It's my turn");
@@ -82,13 +84,18 @@ public class GameManager : MonoBehaviour
                     buttonChallenge.gameObject.SetActive(false);
                     buttonSkipChallenge.gameObject.SetActive(false);
                     buttonPlayCards.gameObject.SetActive(true);
+                    rankSelectorObj.SetActive(true);
+                    Debug.Log("Show rank selector");
+                    Debug.Log("Found RankSelector: " + rankSelectorObj.GetComponent<RankSelector>());
+                    rankSelectorObj.GetComponent<RankSelector>().Refresh();
+                    Debug.Log("Refresh rank selector");
                 }
                 else
                 {
                     Debug.Log("There is a claim, I cannot play cards yet.");
                     buttonChallenge.gameObject.SetActive(true);
                     buttonSkipChallenge.gameObject.SetActive(true);
-                    buttonPlayCards.gameObject.SetActive(false);
+                    buttonPlayCards.gameObject.SetActive(true);
                 }
             }
             else
@@ -96,13 +103,14 @@ public class GameManager : MonoBehaviour
                 Debug.Log("It's my turn but I am not the round beginner");
                 buttonChallenge.gameObject.SetActive(true);
                 buttonSkipChallenge.gameObject.SetActive(true);
-                buttonPlayCards.gameObject.SetActive(false);
+                buttonPlayCards.gameObject.SetActive(true);
             }
         }
         else
         {
             Debug.Log("It's not my turn");
             inGameActionButtons.SetActive(false);
+
         }
     }
 

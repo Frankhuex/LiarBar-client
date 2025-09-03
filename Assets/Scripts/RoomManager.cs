@@ -56,9 +56,9 @@ public class RoomManager
         }
         catch (System.Exception ex)
         {
-            Debug.LogError("Error parsing message: " + text);
-            Debug.LogError("Caught exception: " + ex.Message);
-            Debug.LogError(ex.StackTrace);
+            Debug.Log("Error parsing message: " + text);
+            Debug.Log("Caught exception: " + ex.Message);
+            Debug.Log(ex.StackTrace);
             // try
             // {
             //     Message<string> msg2 = Message<string>.FromJson<Message<string>>(text);
