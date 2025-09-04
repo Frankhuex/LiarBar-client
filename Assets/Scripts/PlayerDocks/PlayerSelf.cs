@@ -56,6 +56,11 @@ public class PlayerSelf : IPlayerDock
             Debug.Log("请选择牌");
             yield break;
         }
+        if (rankSelector.Rank == Card.Rank.NULL)
+        {
+            Debug.Log("请选择数字");
+            yield break;
+        }
 
         Card.Rank toClaim = RoomManager.Instance.room.currentClaimRank;
         if (RoomManager.Instance.room.MustClaim(RoomManager.Instance.room.currentPlayerIndex))
