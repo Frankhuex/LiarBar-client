@@ -51,20 +51,24 @@ public class PlayerSelf : IPlayerDock
 
     private IEnumerator OnPlayCardsButtonClick()
     {
+        int myIndex = RoomManager.Instance.GetSelfIndex();
+        Room room = RoomManager.Instance.room;
+
+        Debug.Log(handCardManager.cardSequence.FindAll(card => handCardManager.IsPicked(card)).Count);
         if (handCardManager.cardSequence.FindAll(card => handCardManager.IsPicked(card)).Count == 0)
         {
             Debug.Log("请选择牌");
             yield break;
         }
-        if (rankSelector.Rank == Card.Rank.NULL)
-        {
-            Debug.Log("请选择数字");
-            yield break;
-        }
 
-        Card.Rank toClaim = RoomManager.Instance.room.currentClaimRank;
-        if (RoomManager.Instance.room.MustClaim(RoomManager.Instance.room.currentPlayerIndex))
+        Card.Rank toClaim = room.currentClaimRank;
+        if (room.MustClaim(myIndex))
         {
+            if (rankSelector.Rank == Card.Rank.NULL)
+            {
+                Debug.Log("请选择数字");
+                yield break;
+            }
             toClaim = rankSelector.Rank;
         }
         
